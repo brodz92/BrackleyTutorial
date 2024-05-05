@@ -6,6 +6,11 @@ const JUMP_VELOCITY = -300.0
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var health_bar: ProgressBar = $HealthBar
 
+func _ready():
+	initialize_signals()
+
+func initialize_signals():
+	SignalBus.connect("hurt_player", self.call("hurt_player"))
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity: int = ProjectSettings.get_setting("physics/2d/default_gravity")
@@ -45,7 +50,7 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
-func got_hurt(damage):
-	health -= damage
-	health_bar.value = health
-	print("Health reduced to: ", health)
+func hurt_player():
+	print("Took Damage")
+
+
