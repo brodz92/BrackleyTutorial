@@ -1,13 +1,15 @@
 extends CharacterBody2D
 
-
+var health: int = 2
 const SPEED = 130.0
 const JUMP_VELOCITY = -300.0
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var health_bar: ProgressBar = $HealthBar
+
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity: int = ProjectSettings.get_setting("physics/2d/default_gravity")
-
+ 
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
@@ -42,3 +44,8 @@ func _physics_process(delta: float) -> void:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 
 	move_and_slide()
+
+func got_hurt(damage):
+	health -= damage
+	health_bar.value = health
+	print("Health reduced to: ", health)
