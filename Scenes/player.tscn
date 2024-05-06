@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://dhsimpte8xd4p"]
+[gd_scene load_steps=37 format=3 uid="uid://dhsimpte8xd4p"]
 
 [ext_resource type="Texture2D" uid="uid://bxpuct1x2v4nm" path="res://brackeys_platformer_assets/sprites/knight.png" id="1_duphj"]
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_q5073"]
@@ -19,6 +19,10 @@ region = Rect2(64, 0, 32, 32)
 atlas = ExtResource("1_duphj")
 region = Rect2(96, 0, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_fuiqb"]
+atlas = ExtResource("1_duphj")
+region = Rect2(96, 224, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_l2yvh"]
 atlas = ExtResource("1_duphj")
 region = Rect2(0, 224, 32, 32)
@@ -34,6 +38,22 @@ region = Rect2(64, 224, 32, 32)
 [sub_resource type="AtlasTexture" id="AtlasTexture_rtcny"]
 atlas = ExtResource("1_duphj")
 region = Rect2(96, 224, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0miqo"]
+atlas = ExtResource("1_duphj")
+region = Rect2(0, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eu14b"]
+atlas = ExtResource("1_duphj")
+region = Rect2(32, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ppmre"]
+atlas = ExtResource("1_duphj")
+region = Rect2(64, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7mty2"]
+atlas = ExtResource("1_duphj")
+region = Rect2(96, 192, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fxr7t"]
 atlas = ExtResource("1_duphj")
@@ -124,6 +144,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_fuiqb")
+}],
+"loop": false,
+"name": &"dead",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_l2yvh")
 }, {
 "duration": 1.0,
@@ -135,8 +163,25 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_rtcny")
 }],
-"loop": true,
+"loop": false,
 "name": &"death",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0miqo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eu14b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ppmre")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7mty2")
+}],
+"loop": false,
+"name": &"hurt",
 "speed": 10.0
 }, {
 "frames": [{
@@ -237,7 +282,6 @@ value = 2.0
 show_percentage = false
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 0.5
 one_shot = true
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
