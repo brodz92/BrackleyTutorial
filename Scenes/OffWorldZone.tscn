@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://bvqshtwbq2mbj"]
+
+[ext_resource type="Script" path="res://Scenes/OffWorldZone.gd" id="1_vbae5"]
+
+[node name="OffWorldZone" type="Area2D" groups=["Main"]]
+collision_mask = 2
+script = ExtResource("1_vbae5")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

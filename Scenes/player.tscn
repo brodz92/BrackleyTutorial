@@ -1,7 +1,8 @@
-[gd_scene load_steps=37 format=3 uid="uid://dhsimpte8xd4p"]
+[gd_scene load_steps=38 format=3 uid="uid://dhsimpte8xd4p"]
 
 [ext_resource type="Texture2D" uid="uid://bxpuct1x2v4nm" path="res://brackeys_platformer_assets/sprites/knight.png" id="1_duphj"]
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_q5073"]
+[ext_resource type="AudioStream" uid="uid://bm42p4fcgryil" path="res://brackeys_platformer_assets/sounds/hurt.wav" id="3_rsa18"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_aymk5"]
 atlas = ExtResource("1_duphj")
@@ -263,8 +264,10 @@ script = ExtResource("1_q5073")
 texture_filter = 1
 position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_1txry")
-animation = &"death"
+animation = &"hurt"
 autoplay = "Idle"
+frame = 3
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -4)
@@ -281,7 +284,15 @@ max_value = 2.0
 value = 2.0
 show_percentage = false
 
-[node name="Timer" type="Timer" parent="."]
+[node name="DeathTimer" type="Timer" parent="."]
 one_shot = true
 
-[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[node name="HurtSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_rsa18")
+bus = &"SFX"
+
+[node name="InvulTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="DeathTimer" to="." method="_on_timer_timeout"]
+[connection signal="timeout" from="InvulTimer" to="." method="_on_invul_timer_timeout"]

@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 # Constants
-const SPEED = 130.0
+const SPEED = 110.0
 const JUMP_VELOCITY = -300.0
 
 # Exported and onready variables
@@ -9,40 +9,56 @@ var maxHealth := 3
 var gravity: int = ProjectSettings.get_setting("physics/2d/default_gravity")
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var health_bar: ProgressBar = $HealthBar
-@onready var timer: Timer = $Timer
+@onready var death_timer: Timer = $DeathTimer
+@onready var invul_timer: Timer = $InvulTimer
+@onready var hurt_sound: AudioStreamPlayer2D = $HurtSound
 
 # State variables
 var health
 var isDead = false
+var last_direction = 1
+var is_invulnerable = false
 
 func _ready():
 	health = maxHealth
 	health_bar.max_value = maxHealth
 	health_bar.value = maxHealth
-	SignalBus.hurt_player.connect(on_hurt_player)  # Ensure SignalBus is a valid node path
+	SignalBus.hurt_player.connect(on_hurt_player)
+	SignalBus.kill_player.connect(on_kill_player)
+
+func on_kill_player():
+	trigger_death()
 
 func on_hurt_player():
-	print("Took Damage")
-	reduce_health()
+	if !is_invulnerable:
+		if health > 0:
+			health -= 1
+			health_bar.value = health
+			animated_sprite.play("hurt")
+			hurt_sound.play()
+			if health == 0:
+				trigger_death()
+			else:
+				is_invulnerable = true
+				invul_timer.start()
+			
+				
+	else:
+		return
 
-func reduce_health():
-	if health > 0:
-		health -= 1
-		health_bar.value = health
-		print("Health = " + str(health))
-		if health == 0:
-			trigger_death()
+func _on_invul_timer_timeout() -> void:
+	is_invulnerable = false
 
 func trigger_death():
 	if !isDead:
 		isDead = true
-		timer.start()
+		death_timer.start()
 		Engine.time_scale = 0.5
 		animated_sprite.play("death")
 
 func _on_timer_timeout():
 	print("You died!")
-	get_tree().change_scene_to_file("res://Scenes/game.tscn")
+	get_tree().reload_current_scene()
 	Engine.time_scale = 1
 
 func _physics_process(delta: float) -> void:
@@ -60,6 +76,8 @@ func handle_jump():
 
 func handle_movement(delta):
 	var direction := Input.get_axis("move_left", "move_right")
+	if direction != 0:
+		last_direction = direction
 	handle_animation(direction)
 	if not isDead:
 		if direction:
@@ -72,9 +90,15 @@ func handle_movement(delta):
 	move_and_slide()
 
 func handle_animation(direction: int):
-	animated_sprite.flip_h = direction < 0
+	if animated_sprite.animation == "hurt" and animated_sprite.is_playing():
+		return
 	if isDead:
 		return
+	if direction == 0:
+		animated_sprite.flip_h = last_direction < 0
+	else:
+		animated_sprite.flip_h = direction < 0
+
 	if is_on_floor():
 		if direction == 0:
 			animated_sprite.play("Idle")
@@ -82,3 +106,7 @@ func handle_animation(direction: int):
 			animated_sprite.play("run")
 	elif not is_on_floor():
 		animated_sprite.play("jump")
+
+
+
+
