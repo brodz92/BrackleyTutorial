@@ -12,12 +12,15 @@ var gravity: int = ProjectSettings.get_setting("physics/2d/default_gravity")
 @onready var death_timer: Timer = $DeathTimer
 @onready var invul_timer: Timer = $InvulTimer
 @onready var hurt_sound: AudioStreamPlayer2D = $HurtSound
+@onready var coyote_time = $CoyoteTime
 
 # State variables
 var health
 var isDead = false
 var last_direction = 1
 var is_invulnerable = false
+var justLeftGround = false
+var offGround = false
 
 func _ready():
 	health = maxHealth
@@ -49,6 +52,7 @@ func on_hurt_player():
 func _on_invul_timer_timeout() -> void:
 	is_invulnerable = false
 
+
 func trigger_death():
 	if !isDead:
 		isDead = true
@@ -63,6 +67,7 @@ func _on_timer_timeout():
 
 func _physics_process(delta: float) -> void:
 	handle_gravity(delta)
+	handle_coyote_time()
 	handle_jump()
 	handle_movement(delta)
 
@@ -70,8 +75,16 @@ func handle_gravity(delta):
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
+func handle_coyote_time():
+	if offGround:
+		justLeftGround = true
+		coyote_time.start()
+
+func _on_coyote_time_timeout():
+	justLeftGround = false
+
 func handle_jump():
-	if Input.is_action_just_pressed("jump") and is_on_floor():
+	if (Input.is_action_just_pressed("jump") and justLeftGround) or (Input.is_action_just_pressed("jump") and !offGround):
 		velocity.y = JUMP_VELOCITY
 
 func handle_movement(delta):
@@ -86,7 +99,8 @@ func handle_movement(delta):
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 	else:
 		velocity.x = move_toward(velocity.x, 0, 0)
-
+	if !is_on_floor():
+		offGround = true
 	move_and_slide()
 
 func handle_animation(direction: int):
@@ -106,7 +120,3 @@ func handle_animation(direction: int):
 			animated_sprite.play("run")
 	elif not is_on_floor():
 		animated_sprite.play("jump")
-
-
-
-
