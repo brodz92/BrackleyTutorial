@@ -602,7 +602,7 @@ script = ExtResource("1_vn6pl")
 [node name="Player" parent="." groups=["Main"] instance=ExtResource("3_5pab6")]
 unique_name_in_owner = true
 z_index = 5
-position = Vector2(9, 20)
+position = Vector2(73, -52)
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 position = Vector2(0, -6)
